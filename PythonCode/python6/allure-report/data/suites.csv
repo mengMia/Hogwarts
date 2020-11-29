@@ -1,0 +1,4 @@
+"Status","Start Time","Stop Time","Duration in ms","Parent Suite","Suite","Sub Suite","Test Class","Test Method","Name","Description"
+"passed","Sat Nov 21 13:44:09 CST 2020","Sat Nov 21 13:44:09 CST 2020","0","testing","test_calc","TestCalc","","","test_add[float]",""
+"passed","Sat Nov 21 13:44:09 CST 2020","Sat Nov 21 13:44:09 CST 2020","0","testing","test_calc","TestCalc","","","test_add[æ´æ°]",""
+"passed","Sat Nov 21 13:44:09 CST 2020","Sat Nov 21 13:44:09 CST 2020","0","testing","test_calc","TestCalc","","","test_add[å¤§æ°]",""
