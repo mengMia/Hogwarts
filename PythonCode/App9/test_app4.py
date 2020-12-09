@@ -40,5 +40,12 @@ class TestFind():
         print(current_price)
         assert current_price > 200
 
+    def test_get_currentPrice(self):
+        self.driver.find_element_by_id("com.xueqiu.android:id/tv_search").click()
+        self.driver.find_element_by_id("com.xueqiu.android:id/search_input_text").send_keys("阿里巴巴")
+        self.driver.find_element(MobileBy.XPATH,
+                                 '//*[@resource-id="com.xueqiu.android:id/name" and @text="阿里巴巴"]').click()
+        current_price = float(self.driver.find_element(MobileBy.XPATH, "//*[@text='09988']/../../..//*[@resource-id='com.xueqiu.android:id/current_price']").text)
+        print(current_price)
     if __name__ == '__main__':
         pytest.main()
