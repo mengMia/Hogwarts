@@ -58,6 +58,5 @@ class TestFind():
         # current_price = float(self.driver.find_element(MobileBy.ID, 'com.xueqiu.android:id/current_price').text)
         # print(current_price)
         # assert current_price > 200
-    def
     if __name__ == '__main__':
         pytest.main()
