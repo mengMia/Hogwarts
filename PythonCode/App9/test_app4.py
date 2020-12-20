@@ -47,5 +47,34 @@ class TestFind():
                                  '//*[@resource-id="com.xueqiu.android:id/name" and @text="阿里巴巴"]').click()
         current_price = float(self.driver.find_element(MobileBy.XPATH, "//*[@text='09988']/../../..//*[@resource-id='com.xueqiu.android:id/current_price']").text)
         print(current_price)
+
+    def test_myinfo_uiauto(self):
+        """
+        1.点击我的，进入到个人信息页面
+        2.点击登录，进入登录页面
+        3.输入用户名、密码
+        4.点击登录
+        :return:
+        """
+        # 定位“我的”有两种方法
+        # 1.直接用text进行定位
+        # self.driver.find_element_by_android_uiautomator('new UiSelector().text("我的")').click()
+        # 2.先用tabname，找到之后再用text,通过组合属性的方式定位元素，用.
+        self.driver.find_element_by_android_uiautomator('new UiSelector().resourceId("com.xueqiu.android:id/tab_name").text("我的")').click()
+        sleep(3)
+        self.driver.find_element_by_android_uiautomator('new UiSelector().textContains("帐号密码")').click()
+        self.driver.find_element_by_android_uiautomator('new UiSelector().resourceId("com.xueqiu.android:id/login_account")').send_keys("18225510081")
+        self.driver.find_element_by_android_uiautomator('new UiSelector().resourceId("com.xueqiu.android:id/login_password")').send_keys("57030qwert!!")
+        self.driver.find_element_by_android_uiautomator('new UiSelector().resourceId("com.xueqiu.android:id/button_next")').click()
+        # 通过父亲结点定位元素
+        # self.driver.find_element_by_android_uiautomator('new UiSelector().resourceId("com.xueqiu.android:id/title_container").childSelector(text("股票"))').click()
+
+    def test_scroll_find_element(self):
+        self.driver.find_element_by_android_uiautomator('new UiSelector().text("关注")').click()
+        self.driver.find_element_by_android_uiautomator('new UiScrollable(new UiSelector().'
+                                                        'scrollable(true).instance(0)).'
+                                                        'scrollIntoView(new UiSelector().text("银行螺丝钉").'
+                                                        'instance(0))').click()
+        sleep(5)
     if __name__ == '__main__':
         pytest.main()
