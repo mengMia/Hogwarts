@@ -3,6 +3,8 @@ from time import sleep
 import pytest
 from appium import webdriver
 from appium.webdriver.common.mobileby import MobileBy
+from hamcrest import assert_that, close_to
+
 
 class TestFind():
     def setup(self):
@@ -39,6 +41,9 @@ class TestFind():
         current_price = float(self.driver.find_element(MobileBy.ID, 'com.xueqiu.android:id/current_price').text)
         print(current_price)
         assert current_price > 200
+        # 使用hamcrest断言
+        expect_price = 250
+        assert_that(current_price, close_to(expect_price, expect_price * 0.1))
 
     def test_get_currentPrice(self):
         self.driver.find_element_by_id("com.xueqiu.android:id/tv_search").click()
