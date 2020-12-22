@@ -19,6 +19,9 @@ class TestWebview():
         desired_caps['skipDeviceInitialization'] = True
         desired_caps['unicodeKeyBoard'] = 'true'  # 输入中文搜索词的时候需要加这个，但是貌似不加也不会有问题
         desired_caps['resetKeyBoard'] = 'true'
+        desired_caps['chromedriverExecutableDir'] = "E:/Learning/ComputerScience/SoftwareTesting/Hogwarts/driver"
+        desired_caps['chromedriverChromeMappingFile'] = "E:/Learning/ComputerScience/SoftwareTesting/Hogwarts/ProjectExercise/PythonCode/App10/mapping.json"
+        desired_caps['skipServerInstallation'] = True
         self.driver = webdriver.Remote("http://localhost:4723/wd/hub", desired_caps)
         self.driver.implicitly_wait(5)
 
