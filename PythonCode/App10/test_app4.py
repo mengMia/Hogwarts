@@ -20,6 +20,8 @@ class TestInteraction():
         desired_caps['chromedriverExecutableDir'] = "E:/Learning/ComputerScience/SoftwareTesting/Hogwarts/driver"
         desired_caps['chromedriverChromeMappingFile'] = "E:/Learning/ComputerScience/SoftwareTesting/Hogwarts/ProjectExercise/PythonCode/App10/mapping.json"
         desired_caps['skipServerInstallation'] = True
+        # 使用appium自动启动指定的模拟器
+        desired_caps['avd'] = 'Pixel_23_6'
         self.driver = webdriver.Remote("http://localhost:4723/wd/hub", desired_caps)
         self.driver.implicitly_wait(5)
 
