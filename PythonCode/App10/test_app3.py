@@ -24,3 +24,4 @@ class TestWXMicro():
         self.driver.implicitly_wait(10)
 
     def test_search(self):
+        pass
