@@ -14,7 +14,7 @@ class TestInteraction():
         desired_caps['appPackage'] = 'com.tencent.wework'
         desired_caps['appActivity'] = '.launch.LaunchSplashActivity'
         desired_caps['noReset'] = True  # 这里的noreset设置为true，重启app的时候就不会清除登录信息
-        # desired_caps['dontStopAppOnReset'] = True
+        desired_caps['dontStopAppOnReset'] = True  # 这里设置为true，不会重启app，会在当前页面直接执行测试用例
         desired_caps['skipDeviceInitialization'] = True
         desired_caps['unicodeKeyBoard'] = 'true'
         desired_caps['resetKeyBoard'] = 'true'
