@@ -6,7 +6,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 
 class TestInteraction():
-    def setup(self):
+    def setup_class(self):
         desired_caps = {}
         desired_caps['platformName'] = 'Android'
         desired_caps['platformVersion'] = '6.0'
@@ -14,7 +14,7 @@ class TestInteraction():
         desired_caps['appPackage'] = 'com.tencent.wework'
         desired_caps['appActivity'] = '.launch.LaunchSplashActivity'
         desired_caps['noReset'] = True  # 这里的noreset设置为true，重启app的时候就不会清除登录信息
-        # desired_caps['dontStopAppOnReset'] = True
+        desired_caps['dontStopAppOnReset'] = True
         desired_caps['skipDeviceInitialization'] = True
         desired_caps['unicodeKeyBoard'] = 'true'
         desired_caps['resetKeyBoard'] = 'true'
@@ -27,9 +27,24 @@ class TestInteraction():
         self.driver = webdriver.Remote("http://localhost:4723/wd/hub", desired_caps)
         self.driver.implicitly_wait(5)
 
-    def teardown(self):
+    # 设为类级别的，只销毁一次就行了
+    def teardown_class(self):
         sleep(3)
         self.driver.quit()
+    # 方法级别的
+    def teardown(self):
+        # 用例执行完之后返回执行前的页面
+        self.driver.back()
+
+
+    def test_back(self):
+        self.driver.find_element(MobileBy.XPATH, '//*[@text="通讯录"]').click()
+        self.driver.find_element_by_android_uiautomator('new UiScrollable(new UiSelector().'
+                                                        'scrollable(true).instance(0)).'
+                                                        'scrollIntoView(new UiSelector().text("添加成员").'
+                                                        'instance(0))').click()
+        # 用例执行完之后返回执行前的页面，可以加在teardown方法里面
+        # self.driver.back()
 
     def test_daka(self):
         self.driver.find_element(MobileBy.XPATH, '//*[@text="工作台"]').click()
