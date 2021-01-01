@@ -8,9 +8,9 @@ class TestContact:
         self.main = self.app.start().goto_main()
 
     def test_addcontact(self):
-        name = "test1"
+        name = "test4"
         gender = "男"
-        phonenum = "12100000001"
+        phonenum = "12100000004"
         result = self.main.goto_address().\
             click_addmember().\
             add_member_manual().\
