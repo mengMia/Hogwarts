@@ -56,8 +56,9 @@ class TestContact():
         self.driver.find_element(MobileBy.XPATH, '//*[contains(@text, "手机") and contains(@class, "TextView")]/..//*[@text="手机号"]').send_keys(phonenum)
         self.driver.find_element(MobileBy.XPATH, '//*[@text="保存"]').click()
 
-        # print(self.driver.page_source)
-        text_toast = self.driver.find_element(MobileBy.XPATH, '//*[@class="android.widget.Toast"]').text
+        # sleep(2)
+        # print(self.driver.page_source) 需要等待2s才能抓取到toast
+        text_toast = self.driver.find_element(MobileBy.XPATH, '//*[@class="android.widget.Toast"]').text   # 这里find_element方法会调用隐式等待，每隔0.5s去查找toast
         assert '添加成功' == text_toast
 
 
