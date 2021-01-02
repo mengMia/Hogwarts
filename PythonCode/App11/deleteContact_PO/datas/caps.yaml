@@ -1,0 +1,16 @@
+desirecaps:
+  platformName: 'Android'
+  platformVersion: '6.0'
+  deviceName: 'emulator-5554'
+  appPackage: 'com.tencent.wework'
+  appActivity: '.launch.LaunchSplashActivity'
+  noReset: "True"
+  skipDeviceInitialization: "True"
+  unicodeKeyBoard: "True"
+  resetKeyBoard: "True"
+  skipServerInstallation: "True"
+
+
+server:
+  ip: "localhost"
+  port: "4723"
