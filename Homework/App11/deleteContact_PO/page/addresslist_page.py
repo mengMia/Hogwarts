@@ -1,7 +1,7 @@
 from appium.webdriver.common.mobileby import MobileBy
 
-from PythonCode.App11.deleteContact_PO.page.base_page import BasePage
-from PythonCode.App11.deleteContact_PO.page.search_page import SearchPage
+from Homework.App11.deleteContact_PO.page.base_page import BasePage
+from Homework.App11.deleteContact_PO.page.search_page import SearchPage
 
 
 class AddressListPage(BasePage):
