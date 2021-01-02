@@ -3,8 +3,8 @@ from time import sleep
 import yaml
 from appium import webdriver
 
-from PythonCode.App11.deleteContact_PO.page.base_page import BasePage
-from PythonCode.App11.deleteContact_PO.page.main_page import MainPage
+from Homework.App11.deleteContact_PO.page.base_page import BasePage
+from Homework.App11.deleteContact_PO.page.main_page import MainPage
 
 with open('../datas/caps.yaml') as f:
     myconfig = yaml.safe_load(f)
