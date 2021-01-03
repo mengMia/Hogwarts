@@ -1,14 +1,32 @@
 from mitmproxy import http
 import json
 
+# 优化，考虑每次刷新页面的时候都有不同的显示
+# 修改规则模型
+rule = [-5, -3, -1, 0, 1, 3, 5, 100]
+# 统计url
+url_index = dict()
+
 
 def response(flow: http.HTTPFlow):
+    # 拿到请求url
+    url = flow.request.url.split(".json")[0]
+    # 如果url不在url_index字典的key中,即该url第一次访问
+    if url not in url_index.keys():
+        # 把对应的key值赋值为0
+        url_index[url] = 0
+    else:
+        url_index[url] += 1
+
+    # 根据url的访问次数，循环去rule中取值，因为url的次数一直在变化，所以不会出现紧挨着的两次取重复值（rule中的num）的情况
+    seed = url_index[url] % len(rule)
+
     # 加上过滤条件
     if "quote.json" in flow.request.pretty_url and "x=" in flow.request.pretty_url:
         # 保存响应数据，并转换为python对象，固定模式
         data = json.loads(flow.response.content)
         # 对数据进行批量修改，自已定义一个方法
-        data_new = json_travel(data, num=5)
+        data_new = json_travel(data, text=rule[seed]) # num参数可以改为array或者其他数据类型试试看
 
         # 把修改后的内容赋值给response原始数据格式，固定模式
         flow.response.text = json.dumps(data_new)
