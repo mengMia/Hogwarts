@@ -1,0 +1,10 @@
+{
+  "teacher": {
+    "nickname": "feier",
+    "age": 18
+  },
+  "student": {
+    "nickname": ["xiaoming", "xiaohong"],
+    "age": 3
+  }
+}
