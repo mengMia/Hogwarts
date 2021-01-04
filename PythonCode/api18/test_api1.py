@@ -27,3 +27,9 @@ class TestDemo:
         print(r.text)
         assert r.status_code == 200
 
+    # 构造请求的header
+    def test_header(self):
+        r = requests.get('http://httpbin.testing-studio.com/get', headers={"h": "header demo"})
+        print(r.text)
+        assert r.status_code == 200
+        assert r.json()["headers"]["H"] == "header demo"
