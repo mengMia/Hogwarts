@@ -17,7 +17,7 @@ class TestDemo:
         print(r.text)
         assert r.status_code == 200
 
-    # 构造post的form请求，参数应为data
+    # 构造post的form请求，参数应为data,是以form表单的形式发送出去
     def test_post_form(self):
         payload = {
             "level": 1,
@@ -33,3 +33,15 @@ class TestDemo:
         print(r.text)
         assert r.status_code == 200
         assert r.json()["headers"]["H"] == "header demo"
+
+    # 构造json请求，发送json参数，实际上是以data形式发送的，可以看到这个响应结果里面的data是json格式，而且header部分的content-type是application/json
+    def test_post_json(self):
+        payload = {
+            "level": 1,
+            "name": "ET"
+        }
+        r = requests.post('http://httpbin.testing-studio.com/post', json=payload)
+        print(r.text)
+        assert r.status_code == 200
+        assert r.json()['json']['level']==1
+
