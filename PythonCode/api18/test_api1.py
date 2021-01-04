@@ -1,3 +1,5 @@
+from hamcrest import *
+from jsonpath import jsonpath
 import requests
 
 class TestDemo:
@@ -44,4 +46,23 @@ class TestDemo:
         print(r.text)
         assert r.status_code == 200
         assert r.json()['json']['level']==1
+
+    def test_hogwarts_json(self):
+        r = requests.get('https://ceshiren.com/categories.json')
+        print(r.text)
+        assert r.status_code == 200
+        assert r.json()['category_list']['categories'][0]['name'] == "开源项目"
+        print(jsonpath(r.json(), '$..name'))
+        # 取所有name中的第一个
+        assert jsonpath(r.json(), '$..name')[0] == "开源项目"
+
+    def test_hamcrest(self):
+        r = requests.get('https://ceshiren.com/categories.json')
+        print(r.text)
+        assert r.status_code == 200
+        assert_that(r.json()['category_list']['categories'][0]['name'], equal_to("开源项目"))
+        print(jsonpath(r.json(), '$..name'))
+        # 取所有name中的第一个
+        assert jsonpath(r.json(), '$..name')[0] == "开源项目"
+
 
