@@ -25,23 +25,64 @@ class Tag:
         token = r.json()['access_token']
         return token
 
+    def is_group_name_exist(self, group_name):
+        """
+        判断group_name是否已经存在
+        :param group_name:
+        :return:
+        """
+        for group in self.list().json()["tag_group"]:
+            if group_name in group["group_name"]:
+                return group["group_id"]
+        # todo: 这里如果group_id是空，会和false重合，是编程语言上的问题，所以这里不能用false，应该抛出异常
+        # print("group name not in group")
+        # return False
+        return ""
 
-    def add(self, group_name, tag):
+    def add(self, group_name, tag, **kwargs):
         """
         添加标签
         :param group_name:
         :param tag:
         :return:
         """
+        data = {
+                "group_name": group_name,
+                "tag": tag,
+                **kwargs
+                }
         r = requests.post("https://qyapi.weixin.qq.com/cgi-bin/externalcontact/add_corp_tag",
                           params={"access_token": self.token},
                           json={
                                 "group_name": group_name,
-                                "tag": tag
+                                "tag": tag,
+                                **kwargs
                             }
                           )
         print(json.dumps(r.json(), indent=2))
         return r
+
+    def add_and_detect(self, group_name, tag, **kwargs):
+        """
+        解决添加标签的时候标签重复导致执行失败的问题, 数据清理
+        :param group_name:
+        :param tag:
+        :param kwargs:
+        :return:
+        """
+        r = self.add(group_name, tag, **kwargs)
+        # 如果请求状态码正常，接口的错误码是40071，说明已经有group_name存在，要先检验是不是真的存在于现有的tag列表中，检验方法里返回了group_id，然后再删掉这个group_id
+        if r.json()["errcode"] == 40071:
+            group_id = self.is_group_name_exist(group_name)
+            if not group_id:
+                # 这个返回说明是接口有问题
+                return False
+            self.delete_group(group_id)
+            self.add(group_name, tag, **kwargs)
+        result = self.is_group_name_exist(group_name)
+        if not result:
+            print("add not success")
+        return result
 
     def list(self):
         """
@@ -76,19 +117,30 @@ class Tag:
         print(json.dumps(r.json(), indent=2))
         return r
 
-    def delete(self, tag_id, group_id):
+    def delete_group(self, group_id):
         """
-        删除标签
-        :param tag_id:
+        根据group_id删除标签
         :param group_id:
         :return:
         """
+        r = requests.post("https://qyapi.weixin.qq.com/cgi-bin/externalcontact/del_corp_tag",
+                          params={"access_token": self.token},
+                          json={
+                              "group_id": group_id
+                          })
+        print(json.dumps(r.json(), indent=2))
+        return r
 
+    def delete_tag(self, tag_id):
+        """
+        根据tag_id删除标签
+        :param tag_id:
+        :return:
+        """
         r = requests.post("https://qyapi.weixin.qq.com/cgi-bin/externalcontact/del_corp_tag",
                           params={"access_token": self.token},
                           json={
                               "tag_id": tag_id,
-                              "group_id": group_id
                           })
         print(json.dumps(r.json(), indent=2))
         return r
