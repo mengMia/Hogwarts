@@ -19,17 +19,12 @@ class TestTag():
         ['etb90BDQAAf5dmQpHyNg_Ijtk-Q0QD4A', 'tag1  空格'],
     ])
     def test_tag_list(self, tag_id, tag_name):
-        # 用jsonpath断言，就不需要用这个group了
-        # group_name = "python15"
         tag_name = tag_name + str(datetime.datetime.now().strftime("%Y%m%d-%H%M"))
-        # 获取token没有必要每次执行方法的时候都重新获取一次，所以将其放到setup_class里
-        # tag = Tag()
         r_list = self.tag.list()
         r_update = self.tag.update(
             id=tag_id,
             tag_name = tag_name
         )
-        # 获取修改之后的标签列表
         r = self.tag.list()
         # 断言
         # tags = [
@@ -37,11 +32,35 @@ class TestTag():
         #     for group in r.json()['tag_group'] if group['group_name'] == group_name
         #     for tag in group['tag'] if tag['name'] == tag_name
         # ]
-        # assert tags != []
-        # 这个表达式不正确
-        # assert jsonpath(r.json(), f"$..[?(@.name='{tag_name}')]") is not None
         assert jsonpath(r.json(), f"$..[?(@.name=='{tag_name}')]")[0]['name'] == tag_name
 
-    # 专门写一个会执行失败的测试用例，测试特殊字符之类的
-    # def test_tag_list(self, tag_id, tag_name):
-    #     pass
+    @pytest.mark.parametrize("group_name, tag_name, order",[
+        ["标签组1", "标签名1", "1"],
+        ["tag_group2", "tag_name2", "2"],
+    ])
+    def test_tag_add(self, group_name, tag_name, order):
+        tag = [{"name": tag_name, "order": order}]
+        r = self.tag.add(
+            group_name=group_name,
+            tag=tag
+        )
+        r = self.tag.list()
+        assert jsonpath(r.json(), f"$..[?(@.name=='{tag_name}')]")[0]['name'] == tag_name
+
+    @pytest.mark.parametrize('group_name',[
+        "python15"
+    ])
+    def test_tag_delete(self, group_name):
+        tag_id = self.tag.get_tag_id(group_name)
+        tag_id = tag_id[0]
+        r = self.tag.delete(tag_id, group_id=None)
+        assert r.status_code == 200
+        assert r.json()['errcode'] == 0
+
+    def test_get_tag_id(self):
+        r = self.tag.get_tag_id(group_name="python15")
+        print(r)
+
+
+
+

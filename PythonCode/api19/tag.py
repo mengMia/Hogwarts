@@ -26,8 +26,22 @@ class Tag:
         return token
 
 
-    def add(self):
-        pass
+    def add(self, group_name, tag):
+        """
+        添加标签
+        :param group_name:
+        :param tag:
+        :return:
+        """
+        r = requests.post("https://qyapi.weixin.qq.com/cgi-bin/externalcontact/add_corp_tag",
+                          params={"access_token": self.token},
+                          json={
+                                "group_name": group_name,
+                                "tag": tag
+                            }
+                          )
+        print(json.dumps(r.json(), indent=2))
+        return r
 
     def list(self):
         """
@@ -48,7 +62,6 @@ class Tag:
         # assert r.json()['errcode'] == 0
         return r
 
-    # id和tag_name都是跟测试用例紧密相关的，所以在用例里面传不同的数据吧
     def update(self, id, tag_name):
         """
         编辑标签
@@ -63,5 +76,34 @@ class Tag:
         print(json.dumps(r.json(), indent=2))
         return r
 
-    def delete(self):
-        pass
+    def delete(self, tag_id, group_id):
+        """
+        删除标签
+        :param tag_id:
+        :param group_id:
+        :return:
+        """
+
+        r = requests.post("https://qyapi.weixin.qq.com/cgi-bin/externalcontact/del_corp_tag",
+                          params={"access_token": self.token},
+                          json={
+                              "tag_id": tag_id,
+                              "group_id": group_id
+                          })
+        print(json.dumps(r.json(), indent=2))
+        return r
+
+    def get_tag_id(self, group_name):
+        """
+        获取tag_id
+        :return:
+        """
+        r=self.list()
+        tag_group = r.json()['tag_group']
+        tag_id = []
+        for group in tag_group:
+            if group['group_name'] == group_name:
+                tag = group['tag']
+                for tag_ele in tag:
+                    tag_id.append(tag_ele['id'])
+                return tag_id
