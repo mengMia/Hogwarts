@@ -17,20 +17,22 @@ class TestTag():
         :return:
         """
         r_list = self.tag.list()
-        print(json.dumps(r_list.json(), indent=2))
+        # print(json.dumps(r_list.json(), indent=2))
 
     @pytest.mark.parametrize("tag_id, tag_name", [
-        ['etb90BDQAAf5dmQpHyNg_Ijtk-Q0QD4A', 'tag1_new_'],
-        ['etb90BDQAAf5dmQpHyNg_Ijtk-Q0QD4A', 'tag1_中文'],
-        ['etb90BDQAAf5dmQpHyNg_Ijtk-Q0QD4A', 'tag1  空格'],
+        ['etb90BDQAAZZ6-MRo7b0IT80tfjCPvjg', 'tag1_new_'],
+        ['etb90BDQAAZZ6-MRo7b0IT80tfjCPvjg', 'tag1_中文_'],
     ])
     def test_tag_update(self, tag_id, tag_name):
         tag_name = tag_name + str(datetime.datetime.now().strftime("%Y%m%d-%H%M"))
-        r_list = self.tag.list()
+        # print("第一次调用获取list")
+        # r_list = self.tag.list()
+        print("调用update方法")
         r_update = self.tag.update(
             id=tag_id,
             tag_name = tag_name
         )
+        print("第一次调用获取list")
         r = self.tag.list()
         # 断言
         # tags = [
@@ -41,8 +43,8 @@ class TestTag():
         assert jsonpath(r.json(), f"$..[?(@.name=='{tag_name}')]")[0]['name'] == tag_name
 
     @pytest.mark.parametrize("group_name, tag_name, order",[
-        ["标签组1", "标签名1", "1"],
-        ["tag_group2", "tag_name2", "2"],
+        ["标签组11", "标签名1", "1"],
+        ["tag_group21", "tag_name2", "2"],
     ])
     def test_tag_add(self, group_name, tag_name, order):
         tag = [{"name": tag_name, "order": order}]
@@ -73,21 +75,20 @@ class TestTag():
     #     "python15"
     # ])
     def test_tag_delete_group(self):
-        group_ids = ["etb90BDQAARvRWM-LUhnTVG-8yX8WrAw", "etb90BDQAAAraL_g_aOsqR5E4tMHiIjg"]
+        group_ids = ["etb90BDQAAjenj9E2f5QrjFmkqQmAmdQ"]
         r = self.tag.delete_group(group_ids)
-
-
-
+        assert r.json()["errcode"] == 0
 
     # @pytest.mark.parametrize('group_name', [
     #     "python15"
     # ])
-    # def test_tag_delete_group(self, group_name):
-    #     tag_id = self.tag.get_tag_id(group_name)
-    #     tag_id = tag_id[0]
-    #     r = self.tag.delete_tag(tag_id)
-    #     assert r.status_code == 200
-    #     assert r.json()['errcode'] == 0
+    def test_tag_delete_tag(self):
+        # tag_id = self.tag.get_tag_id(group_name)
+        # tag_id = tag_id[0]
+        tag_ids = ["etb90BDQAAZZ6-MRo7b0IT80tfjCPvjg"]
+        r = self.tag.delete_tag(tag_ids)
+        assert r.status_code == 200
+        assert r.json()['errcode'] == 0
     # def test_get_tag_id(self):
     #     r = self.tag.get_tag_id(group_name="python15")
     #     print(r)

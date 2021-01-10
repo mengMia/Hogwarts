@@ -3,28 +3,15 @@ import json
 
 import requests
 
+from PythonCode.api19.base_api import BaseApi
 
-class Tag:
-    # 1.token可以放到类里面定义,当token修改的时候变成对类的修改？？？
-    # token=None
-    # 2.token可以放在init方法里，创建对象的时候就初始化好，只需要在初始化的时候获取一次就可以，在test_tag里获取token，只需要实例化这个类就可以获取到token：tag=Tag()
+
+class Tag(BaseApi):
     def __init__(self):
-        self.token=self.get_token()
-
-    # 获取token理论上来说不应该放在这个地方，应该放在一个公共的地方
-    def get_token(self):
-        corpid = 'ww485f3e5163864f5a'
-        corpsecret = 'orTmGl1LvfG_7MNsnTDaH5MUAdy1rgiaiPz5hkaxVxI'
-        r = requests.get("https://qyapi.weixin.qq.com/cgi-bin/gettoken",
-                         params={'corpid': corpid, 'corpsecret': corpsecret})
-        print("token获取成功")
-        # print(json.dumps(r.json(), indent=2))
-        # 断言可以加也可以不加，但是如要测获取token失败的情况，就不要加断言了，加了断言会在这里报错，后续的用例就不执行了？
-        # 如果是说这里出错后面的用例就不需要再跑了,那么可以加断言
-        assert r.status_code == 200
-        assert r.json()['errcode'] == 0
-        token = r.json()['access_token']
-        return token
+        """
+        继承父类的init方法，获取token
+        """
+        super().__init__()
 
     def find_group_id_by_name(self, group_name):
         """
@@ -35,9 +22,6 @@ class Tag:
         for group in self.list().json()["tag_group"]:
             if group_name in group["group_name"]:
                 return group["group_id"]
-        # done: 这里如果group_id是空，会和false重合，是编程语言上的问题，所以这里不能用false，应该抛出异常
-        # print("group name not in group")
-        # return False
         print("group name not in goup")
         return ""
 
@@ -62,19 +46,16 @@ class Tag:
         :return:
         """
         data = {
-                "group_name": group_name,
-                "tag": tag,
-                **kwargs
+                "method": "post",
+                "url": "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/add_corp_tag",
+                "params":{"access_token": self.token},
+                "json":{
+                        "group_name": group_name,
+                        "tag": tag,
+                        **kwargs
+                        }
                 }
-        r = requests.post("https://qyapi.weixin.qq.com/cgi-bin/externalcontact/add_corp_tag",
-                          params={"access_token": self.token},
-                          json={
-                                "group_name": group_name,
-                                "tag": tag,
-                                **kwargs
-                            }
-                          )
-        # print(json.dumps(r.json(), indent=2))
+        r = self.send(data)
         return r
 
     def add_and_detect(self, group_name, tag, **kwargs):
@@ -92,7 +73,7 @@ class Tag:
             if not group_id:
                 # 这个返回说明是接口有问题
                 return ""
-            self.delete_group(group_id)
+            self.delete_group([group_id])
             self.add(group_name, tag, **kwargs)
         result = self.find_group_id_by_name(group_name)
         if not result:
@@ -104,18 +85,15 @@ class Tag:
         获取标签列表
         :return: 列表r
         """
-        r = requests.post(
-            # post请求带参数的话，放在params里
-            'https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_corp_tag_list?',
-            params={"access_token": self.token},
-            json={
+        data = {
+            "method": "post",
+            "url": "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_corp_tag_list?",
+            "params": {"access_token": self.token},
+            "json":{
                 "tag_id": []
             }
-        )
-        # print(json.dumps(r.json(), indent=2))
-        # list也要测试某个查询失败的情况，所以去掉断言
-        # assert r.status_code == 200
-        # assert r.json()['errcode'] == 0
+        }
+        r = self.send(data)
         return r
 
     def update(self, id, tag_name):
@@ -123,13 +101,16 @@ class Tag:
         编辑标签
         :return:编辑标签接口的响应json数据
         """
-        r = requests.post("https://qyapi.weixin.qq.com/cgi-bin/externalcontact/edit_corp_tag",
-                          params={"access_token": self.token},
-                          json={
-                              "id": id,
-                              "name": tag_name
-                          })
-        print(json.dumps(r.json(), indent=2))
+        data = {
+            "method": "post",
+            "url": "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/edit_corp_tag",
+            "params": {"access_token": self.token},
+            "json": {
+                "id": id,
+                "name": tag_name
+                }
+        }
+        r = self.send(data)
         return r
 
     def delete_group(self, group_id):
@@ -138,13 +119,15 @@ class Tag:
         :param group_id:
         :return:
         """
-        r = requests.post("https://qyapi.weixin.qq.com/cgi-bin/externalcontact/del_corp_tag",
-                          params={"access_token": self.token},
-                          json={
-                              "group_id": group_id
-                          })
-        print("这个是detele_group方法")
-        print(json.dumps(r.json(), indent=2))
+        data = {
+            "method": "post",
+            "url": "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/del_corp_tag",
+            "params": {"access_token": self.token},
+            "json": {
+                "group_id": group_id
+            }
+        }
+        r = self.send(data)
         return r
 
     def delete_tag(self, tag_id):
@@ -153,12 +136,15 @@ class Tag:
         :param tag_id:
         :return:
         """
-        r = requests.post("https://qyapi.weixin.qq.com/cgi-bin/externalcontact/del_corp_tag",
-                          params={"access_token": self.token},
-                          json={
-                              "tag_id": tag_id,
-                          })
-        print(json.dumps(r.json(), indent=2))
+        data = {
+            "method": "post",
+            "url": "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/del_corp_tag",
+            "params": {"access_token": self.token},
+            "json": {
+                "tag_id": tag_id,
+            }
+        }
+        r = self.send(data)
         return r
 
     def delete_and_detect_group(self, group_ids):
