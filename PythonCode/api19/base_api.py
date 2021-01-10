@@ -25,13 +25,19 @@ class BaseApi:
         token = r.json()['access_token']
         return token
 
-    def send(self, kwargs):
+    params = {}
+    def send(self, data):
         """
         封装request方法
         :param kwargs:
         :return:
         """
         # request方法是get和post的底层方法，只要传入请求方式就可以了
-        r = requests.request(**kwargs)
+        raw_data = json.dumps(data)
+        for k, v in self.params.items():
+            raw_data = raw_data.replace("${" + k + "}", v)
+        print(raw_data)
+        data = json.load(raw_data)
+        r = requests.request(*data)
         print(json.dumps(r.json(), indent=2))
         return r

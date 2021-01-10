@@ -2,6 +2,7 @@ import datetime
 import json
 
 import requests
+import yaml
 
 from PythonCode.api19.base_api import BaseApi
 
@@ -11,7 +12,8 @@ class Tag(BaseApi):
         """
         继承父类的init方法，获取token
         """
-        super().__init__()
+        # super().__init__()
+        self.params["token"] = self.token
 
     def find_group_id_by_name(self, group_name):
         """
@@ -101,16 +103,21 @@ class Tag(BaseApi):
         编辑标签
         :return:编辑标签接口的响应json数据
         """
-        data = {
-            "method": "post",
-            "url": "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/edit_corp_tag",
-            "params": {"access_token": self.token},
-            "json": {
-                "id": id,
-                "name": tag_name
-                }
-        }
-        r = self.send(data)
+        # data = {
+        #     "method": "post",
+        #     "url": "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/edit_corp_tag",
+        #     "params": {"access_token": self.token},
+        #     "json": {
+        #         "id": id,
+        #         "name": tag_name
+        #         }
+        # }
+        self.params["id"] = id
+        self.params["tag_name"] = tag_name
+        with open("../api19/tag.yaml", encoding="utf-8") as f:
+            data = yaml.safe_load(f)
+        print(data)
+        r = self.send(data["update"])
         return r
 
     def delete_group(self, group_id):
