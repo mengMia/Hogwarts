@@ -17,7 +17,8 @@ class Tag:
         corpsecret = 'orTmGl1LvfG_7MNsnTDaH5MUAdy1rgiaiPz5hkaxVxI'
         r = requests.get("https://qyapi.weixin.qq.com/cgi-bin/gettoken",
                          params={'corpid': corpid, 'corpsecret': corpsecret})
-        print(json.dumps(r.json(), indent=2))
+        print("token获取成功")
+        # print(json.dumps(r.json(), indent=2))
         # 断言可以加也可以不加，但是如要测获取token失败的情况，就不要加断言了，加了断言会在这里报错，后续的用例就不执行了？
         # 如果是说这里出错后面的用例就不需要再跑了,那么可以加断言
         assert r.status_code == 200
@@ -25,7 +26,7 @@ class Tag:
         token = r.json()['access_token']
         return token
 
-    def is_group_name_exist(self, group_name):
+    def find_group_id_by_name(self, group_name):
         """
         判断group_name是否已经存在
         :param group_name:
@@ -34,10 +35,24 @@ class Tag:
         for group in self.list().json()["tag_group"]:
             if group_name in group["group_name"]:
                 return group["group_id"]
-        # todo: 这里如果group_id是空，会和false重合，是编程语言上的问题，所以这里不能用false，应该抛出异常
+        # done: 这里如果group_id是空，会和false重合，是编程语言上的问题，所以这里不能用false，应该抛出异常
         # print("group name not in group")
         # return False
+        print("group name not in goup")
         return ""
+
+    def is_group_id_exist(self, group_id):
+        """
+        判断group_id是否已经存在
+        :param group_id:
+        :return:
+        """
+        for group in self.list().json()["tag_group"]:
+            if group_id in group["group_id"]:
+                print("这个是is_group_id_exist方法，return true")
+                return True
+        print("这个是is_group_id_exist方法，return false")
+        return False
 
     def add(self, group_name, tag, **kwargs):
         """
@@ -59,7 +74,7 @@ class Tag:
                                 **kwargs
                             }
                           )
-        print(json.dumps(r.json(), indent=2))
+        # print(json.dumps(r.json(), indent=2))
         return r
 
     def add_and_detect(self, group_name, tag, **kwargs):
@@ -73,13 +88,13 @@ class Tag:
         r = self.add(group_name, tag, **kwargs)
         # 如果请求状态码正常，接口的错误码是40071，说明已经有group_name存在，要先检验是不是真的存在于现有的tag列表中，检验方法里返回了group_id，然后再删掉这个group_id
         if r.json()["errcode"] == 40071:
-            group_id = self.is_group_name_exist(group_name)
+            group_id = self.find_group_id_by_name(group_name)
             if not group_id:
                 # 这个返回说明是接口有问题
-                return False
+                return ""
             self.delete_group(group_id)
             self.add(group_name, tag, **kwargs)
-        result = self.is_group_name_exist(group_name)
+        result = self.find_group_id_by_name(group_name)
         if not result:
             print("add not success")
         return result
@@ -97,7 +112,7 @@ class Tag:
                 "tag_id": []
             }
         )
-        print(json.dumps(r.json(), indent=2))
+        # print(json.dumps(r.json(), indent=2))
         # list也要测试某个查询失败的情况，所以去掉断言
         # assert r.status_code == 200
         # assert r.json()['errcode'] == 0
@@ -128,6 +143,7 @@ class Tag:
                           json={
                               "group_id": group_id
                           })
+        print("这个是detele_group方法")
         print(json.dumps(r.json(), indent=2))
         return r
 
@@ -143,6 +159,23 @@ class Tag:
                               "tag_id": tag_id,
                           })
         print(json.dumps(r.json(), indent=2))
+        return r
+
+    def delete_and_detect_group(self, group_ids):
+        delete_group_ids = []
+        print("第一次调用delete_group方法")
+        r = self.delete_group(group_ids)
+        # 40068说明这个group id不存在或者不合法，要检测是否真的不存在
+        if r.json()["errcode"] == 40068:
+            for group_id in group_ids:
+                if not self.is_group_id_exist(group_id):
+                    group_id_tmp = self.add_and_detect("123", [{"name": "标签123"}])
+                    delete_group_ids.append(group_id_tmp)
+                else:
+                    delete_group_ids.append(group_id)
+            print("第二次调用delete_group方法")
+            r = self.delete_group(delete_group_ids)
+        print("删除成功")
         return r
 
     def get_tag_id(self, group_name):

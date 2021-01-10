@@ -57,34 +57,44 @@ class TestTag():
         # assert jsonpath(r.json(), f"$..[?(@.name=='{tag_name}')]")[0]['name'] == tag_name
 
     # add方法的更优版本
-    def test_add_and_detect(self):
-        group_name = "标签组1"
-        tag_name = "标签名1"
-        order = "1"
+    @pytest.mark.parametrize("group_name, tag_name, order", [
+        ["标签组1", "标签名1", "1"],
+        ["tag_group2", "tag_name2", "2"],
+        ["python15", "tag_name1", "1"],
+        ["python15", "tag_name2", "2"],
+    ])
+    def test_add_and_detect(self, group_name, tag_name, order):
         tag = [{"name": tag_name, "order": order}]
         result = self.tag.add_and_detect(group_name, tag)
         print(result)
         assert result
 
-    @pytest.mark.parametrize('group_name',[
-        "python15"
-    ])
-    def test_tag_delete_group(self, group_name):
-        pass
+    # @pytest.mark.parametrize('group_name',[
+    #     "python15"
+    # ])
+    def test_tag_delete_group(self):
+        group_ids = ["etb90BDQAARvRWM-LUhnTVG-8yX8WrAw", "etb90BDQAAAraL_g_aOsqR5E4tMHiIjg"]
+        r = self.tag.delete_group(group_ids)
 
 
-    @pytest.mark.parametrize('group_name', [
-        "python15"
-    ])
-    def test_tag_delete_group(self, group_name):
-        tag_id = self.tag.get_tag_id(group_name)
-        tag_id = tag_id[0]
-        r = self.tag.delete_tag(tag_id)
-        assert r.status_code == 200
-        assert r.json()['errcode'] == 0
+
+
+    # @pytest.mark.parametrize('group_name', [
+    #     "python15"
+    # ])
+    # def test_tag_delete_group(self, group_name):
+    #     tag_id = self.tag.get_tag_id(group_name)
+    #     tag_id = tag_id[0]
+    #     r = self.tag.delete_tag(tag_id)
+    #     assert r.status_code == 200
+    #     assert r.json()['errcode'] == 0
     # def test_get_tag_id(self):
     #     r = self.tag.get_tag_id(group_name="python15")
     #     print(r)
+
+    def test_tag_delete_and_detect_group(self):
+        r = self.tag.delete_and_detect_group(["etb90BDQAAjpPhhAxDDdwy1twGX36X3g"])
+        assert r.json()["errcode"] == 0
 
 
 
