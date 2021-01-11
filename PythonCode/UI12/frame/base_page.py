@@ -2,10 +2,7 @@ from appium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from PythonCode.UI12.frame.singleton import singleton
 
-# 引入之后，这个类变成了单例类
-@singleton
 class BasePage:
     _black_list = [(By.XPATH, "//*[@resource-id = 'com.xueqiu.android:id/iv_action_back']")]
     _max_num = 3
