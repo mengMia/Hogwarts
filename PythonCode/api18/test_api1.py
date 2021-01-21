@@ -50,6 +50,8 @@ class TestDemo:
             "name": "ET"
         }
         r = requests.post('http://httpbin.testing-studio.com/post', json=payload)
+        # 传data=(json.dumps(payload))和上面传json参数是一样的效果
+        # r = requests.post('http://httpbin.testing-studio.com/post', data=(json.dumps(payload)))
         print(r.text)
         assert r.status_code == 200
         assert r.json()['json']['level']==1
