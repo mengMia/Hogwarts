@@ -1,3 +1,5 @@
+import json
+
 from hamcrest import *
 from jsonpath import jsonpath
 import requests
@@ -25,7 +27,12 @@ class TestDemo:
             "level": 1,
             "name": "ET"
         }
-        r = requests.post('http://httpbin.testing-studio.com/post', data=payload)
+        r = requests.post('http://httpbin.testing-studio.com/post',
+                          # data={
+                          #     "level": 1,
+                          #     "name": "ET"
+                          # }
+                          data=payload)
         print(r.text)
         assert r.status_code == 200
 
