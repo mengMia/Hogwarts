@@ -10,6 +10,24 @@ from appium.webdriver.webdriver import WebDriver
 class BasePage:
     # 基类里面加日志
     # logging是python的日志工具
+    # >> todo:理解logging
+    # >> todo: logging的等级，1一个日记本利，不同颜色来表明：
+    # >> todo: 1.noset 0 等于没写，废话
+    # >> todo: 2. debug， 10， 一些额外信息，备注，往往和主体功能无关，日报里面的备注
+    # >> todo: 3.info，20，主体功能的信息。日报，做了啥
+    # >> todo:  4.warning，30，警告，下次可能要出错了。
+    # >> todo: 5.error，40，犯错，违法
+    # >> todo: 6.critical，50，极其严重。
+
+    # 其他类
+    # >> todo: 1.日志收集器 logger：日记本
+    # >> todo: 2.日志收集器级别 level
+    # >> todo: 3.日志处理器准备 handler：不同记号的笔
+    # >> todo: 4.日志处理器级别设置
+    # >> todo: 5.设置日志格式format
+    # >> todo: 6.添加日志处理器
+
+    # 创建一个logger日志对象
     root_logger = logging.getLogger()
     print(f"root_logger.handlers:{logging.getLogger().handlers}")
     for h in root_logger.handlers[:]:
