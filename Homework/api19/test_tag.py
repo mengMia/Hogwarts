@@ -20,8 +20,8 @@ class TestTag():
         # print(json.dumps(r_list.json(), indent=2))
 
     @pytest.mark.parametrize("tag_id, tag_name", [
-        ['etb90BDQAAZZ6-MRo7b0IT80tfjCPvjg', 'tag1_new_'],
-        ['etb90BDQAAZZ6-MRo7b0IT80tfjCPvjg', 'tag1_中文_'],
+        ['etb90BDQAADvLPTkJV6PQz8OV4RV7o7w', 'tag1_new_'],
+        ['etb90BDQAAbJlk41UQh52U9JA4CAGrQQ', 'tag1_中文_'],
     ])
     def test_tag_update(self, tag_id, tag_name):
         tag_name = tag_name + str(datetime.datetime.now().strftime("%Y%m%d-%H%M"))
@@ -30,7 +30,7 @@ class TestTag():
         print("调用update方法")
         r_update = self.tag.update(
             id=tag_id,
-            tag_name = tag_name
+            tag_name=tag_name
         )
         print("第一次调用获取list")
         r = self.tag.list()
